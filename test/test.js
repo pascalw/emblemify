@@ -3,14 +3,14 @@
 var fs = require("fs");
 var assert = require("assert");
 
-var hbsfy = require("hbsfy");
-var Handlebars = require("hbsfy/runtime");
+var emblemify = require("emblemify");
+var Handlebars = require("emblemify/runtime");
 
 Handlebars.registerHelper("upcase", function(s) {
   return s.toUpperCase();
 });
 
-var templatePath = __dirname + "/hello.hbs";
+var templatePath = __dirname + "/hello.emblem";
 var exported = __dirname + "/compiled.js";
 
 try {
@@ -18,12 +18,12 @@ try {
 } catch (err) { }
 
 fs.createReadStream(templatePath)
-.pipe(hbsfy(templatePath))
+.pipe(emblemify(templatePath))
 .pipe(fs.createWriteStream(exported))
 .on("close", function() {
   var template = require(exported);
   var res = template({ msg: "hi!" });
-  assert.equal(res, "<h1>HI!</h1>\n");
+  assert.equal(res, "<h1>HI!</h1>");
   console.log("ok");
 });
 

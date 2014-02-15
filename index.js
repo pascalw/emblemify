@@ -2,14 +2,13 @@
 
 var through = require('through');
 var Handlebars = require("handlebars");
+var Emblem = require('emblem');
 
 var extensions = {
-  hbs: 1,
-  handlebar: 1,
-  handlebars: 1
+  emblem: 1
 };
 
-function hbsfy(file) {
+function emblemify(file) {
   if (!extensions[file.split(".").pop()]) return through();
 
   var buffer = "";
@@ -18,10 +17,10 @@ function hbsfy(file) {
     buffer += chunk.toString();
   },
   function() {
-    var js = Handlebars.precompile(buffer);
+    var js = Emblem.precompile(Handlebars, buffer);
     // Compile only with the runtime dependency.
-    var compiled = "// hbsfy compiled Handlebars template\n";
-    compiled += "var Handlebars = require('hbsfy/runtime');\n";
+    var compiled = "// emblemify compiled Handlebars template\n";
+    compiled += "var Handlebars = require('emblemify/runtime');\n";
     compiled += "module.exports = Handlebars.template(" + js.toString() + ");\n";
     this.queue(compiled);
     this.queue(null);
@@ -29,14 +28,14 @@ function hbsfy(file) {
 
 };
 
-hbsfy.configure = function(opts) {
-  if (!opts || !opts.extensions) return hbsfy;
+emblemify.configure = function(opts) {
+  if (!opts || !opts.extensions) return emblemify;
   extensions = {};
   opts.extensions.forEach(function(ext) {
     extensions[ext] = 1;
   });
-  return hbsfy;
+  return emblemify;
 };
 
-module.exports = hbsfy;
+module.exports = emblemify;
 

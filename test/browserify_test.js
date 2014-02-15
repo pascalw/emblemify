@@ -5,7 +5,7 @@ var assert = require("assert");
 var vm = require("vm");
 
 var b = browserify(__dirname + "/browsercode.js");
-b.transform(require("hbsfy"));
+b.transform(require("emblemify"));
 
 // Browser mock
 var context = {
